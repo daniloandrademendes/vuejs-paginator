@@ -16,4 +16,10 @@ const getNestedValue = (obj, path) => {
   return res
 }
 
-export const utils = { merge_objects, getNestedValue }
+const format = (format, args) => {
+  return format.replace(/{{([^}]*)}}/g, (match, key) => 
+    typeof args[key] !== 'undefined' ? args[key] : ''
+  )
+}
+
+export const utils = { merge_objects, getNestedValue, format }

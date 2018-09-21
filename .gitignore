@@ -5,3 +5,5 @@ static
 build
 .idea
 yarn.lock
+*.swp
+package-lock.json

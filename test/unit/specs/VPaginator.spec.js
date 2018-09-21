@@ -44,6 +44,19 @@ describe('VPaginator.vue', () => {
     expect(vm.$children[0].prev_page_url).to.equal(mockedResponse.nested.prev_page_url)
     expect(vm.$children[0].current_page).to.equal(mockedResponse.nested.current_page)
     expect(vm.$children[0].last_page).to.equal(mockedResponse.nested.last_page)
+    console.log(vm.$children[0].items_count)
+    expect(vm.$children[0].items_count).to.equal(mockedResponse.nested.items_count)
+  })
+  it('should render paginator messages correctly', () => {
+    const options = { message_format: '{{current_page}} {{last_page}} {{items_count}}', classes_message: 'message' }
+    const vm = new Vue({
+      data: { dummies: [], options: options },
+      template: '<div><v-paginator resource_url="" :resource.sync="dummies" :options="options"></v-paginator></div>',
+      components: { VPaginator }
+    }).$mount()
+    vm.$children[0].handleResponseData(mockedResponse)
+    console.log(vm.$el)
+    expect(vm.$el.querySelector('.message').textContent).to.contain('1 3 5')
   })
   it('should emit update after fetching data', () => {
     var resource = []

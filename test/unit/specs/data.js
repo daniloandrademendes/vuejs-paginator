@@ -4,6 +4,7 @@ export const mockedResponse = {
     'last_page': 3,
     'next_page_url': '/responses/dummy2.json',
     'prev_page_url': null,
+    'items_count': 5,
     'data': [
       {
         'id': 1,

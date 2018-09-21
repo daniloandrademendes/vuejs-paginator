@@ -120,18 +120,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return {
 	      current_page: '',
 	      last_page: '',
+	      items_count: '',
 	      next_page_url: '',
 	      prev_page_url: '',
+	      message: '',
 	      config: {
 	        remote_data: 'data',
 	        remote_current_page: 'current_page',
 	        remote_last_page: 'last_page',
+	        remote_items_count: 'items_count',
 	        remote_next_page_url: 'next_page_url',
 	        remote_prev_page_url: 'prev_page_url',
 	        previous_button_text: 'Previous',
 	        next_button_text: 'Next',
+	        message_format: 'Page {{current_page}} of {{last_page}} ({{items_count}} items)',
 	        classes_prev: 'btn btn-default',
-	        classes_next: 'btn btn-default'
+	        classes_next: 'btn btn-default',
+	        classes_message: ''
 	      }
 	    };
 	  },
@@ -156,13 +161,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	    handleResponseData: function handleResponseData(response) {
 	      this.makePagination(response);
 	      var data = _utils.utils.getNestedValue(response, this.config.remote_data);
-	      this.$emit('update', data);
+	      console.log(data);
 	    },
 	    makePagination: function makePagination(data) {
 	      this.current_page = _utils.utils.getNestedValue(data, this.config.remote_current_page);
 	      this.last_page = _utils.utils.getNestedValue(data, this.config.remote_last_page);
+	      this.items_count = _utils.utils.getNestedValue(data, this.config.remote_items_count);
 	      this.next_page_url = this.current_page === this.last_page ? null : _utils.utils.getNestedValue(data, this.config.remote_next_page_url);
 	      this.prev_page_url = this.current_page === 1 ? null : _utils.utils.getNestedValue(data, this.config.remote_prev_page_url);
+	      this.message = _utils.utils.format(this.config.message_format, {
+	        current_page: this.current_page,
+	        last_page: this.last_page,
+	        items_count: this.items_count
+	      });
+	      console.log("message: " + this.message);
 	    },
 	    initConfig: function initConfig() {
 	      this.config = _utils.utils.merge_objects(this.config, this.options);
@@ -184,7 +196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	//     <button :class="config.classes_prev" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
 	//       {{config.previous_button_text}}
 	//     </button>
-	//     <span>Page {{current_page}} of {{last_page}}</span>
+	//     <span :class="config.classes_message">{{message}}</span>
 	//     <button :class="config.classes_next" @click="fetchData(next_page_url)" :disabled="!next_page_url">
 	//       {{config.next_button_text}}
 	//     </button>
@@ -224,13 +236,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return res;
 	};
 	
-	var utils = exports.utils = { merge_objects: merge_objects, getNestedValue: getNestedValue };
+	var format = function format(_format, args) {
+	  return _format.replace(/{{([^}]*)}}/g, function (match, key) {
+	    return typeof args[key] !== 'undefined' ? args[key] : '';
+	  });
+	};
+	
+	var utils = exports.utils = { merge_objects: merge_objects, getNestedValue: getNestedValue, format: format };
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"v-paginator\">\n    <button :class=\"config.classes_prev\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n      {{config.previous_button_text}}\n    </button>\n    <span>Page {{current_page}} of {{last_page}}</span>\n    <button :class=\"config.classes_next\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n      {{config.next_button_text}}\n    </button>\n  </div>";
+	module.exports = "<div class=\"v-paginator\">\n    <button :class=\"config.classes_prev\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n      {{config.previous_button_text}}\n    </button>\n    <span :class=\"config.classes_message\">{{message}}</span>\n    <button :class=\"config.classes_next\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n      {{config.next_button_text}}\n    </button>\n  </div>";
 
 /***/ })
 /******/ ])
