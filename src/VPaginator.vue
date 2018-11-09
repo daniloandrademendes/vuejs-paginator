@@ -34,7 +34,7 @@ export default {
       items_count: '',
       next_page_url: '',
       prev_page_url: '',
-      message: ' 13',
+      message: '',
       config: {
           remote_data: 'data',
           remote_current_page: 'current_page',
