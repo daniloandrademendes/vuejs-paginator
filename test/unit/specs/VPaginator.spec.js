@@ -2,6 +2,7 @@ import Vue from 'vue/dist/vue.js'
 import VueResource from 'vue-resource'
 import VPaginator from 'dist/vuejs-paginator'
 import {mockedResponse, options} from './data.js'
+import { mount } from '@vue/test-utils'
 Vue.use(VueResource)
 
 describe('VPaginator.vue', () => {
@@ -62,22 +63,36 @@ describe('VPaginator.vue', () => {
       expect(vm.$el.querySelector('.message').textContent).to.contain('1 3 5')
     })
   })
-  // it('should emit update after fetching data', () => {
-  //   var resource = []
-  //   const vm = new Vue({
-  //     data: { dummies: [], options: options },
-  //     template: '<div><v-paginator resource_url="" :options="options" @update="updateResource"></v-paginator></div>',
-  //     components: { VPaginator },
-  //     methods: {
-  //       updateResource (data) {
-  //         resource = data
-  //       }
-  //     }
-  //   }).$mount()
-  //   vm.$children[0].handleResponseData(mockedResponse)
-  //   // check that response data have been reflected to current instance
-  //   expect(resource).to.have.length(5)
-  // })
+  it('should use custom http handler', () => {
+    var myOptions = JSON.parse(JSON.stringify(options))
+    const customHttpHandler = {
+      used: false,
+      get (url) {
+        console.log(`PASSOU: ${url}`)
+        this.used = true
+        return new Promise(() => {})
+      }
+    }
+    myOptions.http_handler = customHttpHandler
+    const wrapper = mount(VPaginator, {
+      propsData: {
+        options: myOptions,
+        resource_url: 'bla'
+      }
+    })
+    expect(customHttpHandler.used).to.equal(true)
+  })
+  it('should emit update after fetching data', () => {
+    const wrapper = mount(VPaginator, {
+      propsData: {
+        options: options,
+        resource_url: ''
+      }
+    })
+    wrapper.vm.handleResponseData(mockedResponse)
+    let resource = wrapper.emitted().update[0][0]
+    expect(resource).to.have.length(5)
+  })
   it('should merge options with default config', () => {
     const options = { previous_button_text: 'Go back' }
     const vm = new Vue({

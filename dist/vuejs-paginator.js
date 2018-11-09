@@ -136,7 +136,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        message_format: 'Page {{current_page}} of {{last_page}} ({{items_count}} items)',
 	        classes_prev: 'btn btn-default',
 	        classes_next: 'btn btn-default',
-	        classes_message: ''
+	        classes_message: '',
+	        http_handler: this.$http ? this.$http : null
 	      }
 	    };
 	  },
@@ -151,7 +152,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        config.headers = this.config.headers;
 	      }
 	      if (pageUrl) {
-	        this.$http.get(pageUrl, config).then(function (response) {
+	        console.log(this.config);
+	        this.config.http_handler.get(pageUrl, config).then(function (response) {
 	          self.$emit("request_finish", response);
 	          self.handleResponseData(response.data);
 	        }).catch(function (response) {
@@ -163,6 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    handleResponseData: function handleResponseData(response) {
 	      this.makePagination(response);
 	      var data = _utils.utils.getNestedValue(response, this.config.remote_data);
+	      this.$emit('update', data);
 	    },
 	    makePagination: function makePagination(data) {
 	      this.current_page = _utils.utils.getNestedValue(data, this.config.remote_current_page);

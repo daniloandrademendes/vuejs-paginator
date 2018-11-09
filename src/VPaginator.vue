@@ -47,7 +47,8 @@ export default {
           message_format: 'Page {{current_page}} of {{last_page}} ({{items_count}} items)',
           classes_prev: 'btn btn-default',
           classes_next: 'btn btn-default',
-          classes_message: ''
+          classes_message: '',
+          http_handler: this.$http ? this.$http : null
       }
     }
   },
@@ -61,7 +62,8 @@ export default {
           config.headers = this.config.headers;
       }
       if (pageUrl) {
-        this.$http.get(pageUrl, config)
+        console.log(this.config)
+        this.config.http_handler.get(pageUrl, config)
         .then(function (response) {
           self.$emit("request_finish",response)
           self.handleResponseData(response.data)
@@ -74,6 +76,7 @@ export default {
     handleResponseData (response) {
       this.makePagination(response)
       let data = utils.getNestedValue(response, this.config.remote_data)
+      this.$emit('update', data)
     },
     makePagination (data) {
       this.current_page = utils.getNestedValue(data, this.config.remote_current_page)
