@@ -72,7 +72,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = __webpack_require__(3)
 	
 	if (module.exports.__esModule) module.exports = module.exports.default
-	;(typeof module.exports === "function" ? module.exports.options : module.exports).template = __webpack_require__(5)
+	;(typeof module.exports === "function" ? module.exports.options : module.exports).template = __webpack_require__(8)
 	if (false) {
 	(function () {
 	var hotAPI = require("vue-hot-reload-api")
@@ -123,7 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      items_count: '',
 	      next_page_url: '',
 	      prev_page_url: '',
-	      message: '',
+	      message: ' 13',
 	      config: {
 	        remote_data: 'data',
 	        remote_current_page: 'current_page',
@@ -150,18 +150,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.config.headers) {
 	        config.headers = this.config.headers;
 	      }
-	      this.$http.get(pageUrl, config).then(function (response) {
-	        self.$emit("request_finish", response);
-	        self.handleResponseData(response.data);
-	      }).catch(function (response) {
-	        self.$emit("request_error", response);
-	        console.log('Fetching data failed.', response);
-	      });
+	      if (pageUrl) {
+	        this.$http.get(pageUrl, config).then(function (response) {
+	          self.$emit("request_finish", response);
+	          self.handleResponseData(response.data);
+	        }).catch(function (response) {
+	          self.$emit("request_error", response);
+	          console.log('Fetching data failed.', response);
+	        });
+	      }
 	    },
 	    handleResponseData: function handleResponseData(response) {
 	      this.makePagination(response);
 	      var data = _utils.utils.getNestedValue(response, this.config.remote_data);
-	      console.log(data);
 	    },
 	    makePagination: function makePagination(data) {
 	      this.current_page = _utils.utils.getNestedValue(data, this.config.remote_current_page);
@@ -174,7 +175,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        last_page: this.last_page,
 	        items_count: this.items_count
 	      });
-	      console.log("message: " + this.message);
 	    },
 	    initConfig: function initConfig() {
 	      this.config = _utils.utils.merge_objects(this.config, this.options);
@@ -196,7 +196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	//     <button :class="config.classes_prev" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
 	//       {{config.previous_button_text}}
 	//     </button>
-	//     <span :class="config.classes_message">{{message}}</span>
+	//     <span :class="config.classes_message" ref="message">{{message}}</span>
 	//     <button :class="config.classes_next" @click="fetchData(next_page_url)" :disabled="!next_page_url">
 	//       {{config.next_button_text}}
 	//     </button>
@@ -207,13 +207,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.utils = undefined;
+	
+	var _stringify = __webpack_require__(5);
+	
+	var _stringify2 = _interopRequireDefault(_stringify);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var merge_objects = function merge_objects(obj1, obj2) {
 	  var obj3 = {};
 	  for (var attrname in obj1) {
@@ -232,7 +240,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  for (var i = 0; i < path.length; i++) {
 	    res = res[path[i]];
 	  }
-	  if (typeof res == 'undefined') console.log('[VuePaginator] Response doesn\'t contain key ' + originalPath + '!');
+	  if (typeof res == 'undefined') {
+	    console.log('[VuePagintor] Response doesn\'t contain key ' + originalPath + '!');
+	    console.log('obj: ' + (0, _stringify2.default)(obj, null, "  "));
+	    console.log('path: ' + path);
+	  }
 	  return res;
 	};
 	
@@ -246,9 +258,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(6), __esModule: true };
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var core = __webpack_require__(7);
+	var $JSON = core.JSON || (core.JSON = { stringify: JSON.stringify });
+	module.exports = function stringify(it) { // eslint-disable-line no-unused-vars
+	  return $JSON.stringify.apply($JSON, arguments);
+	};
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports) {
 
-	module.exports = "<div class=\"v-paginator\">\n    <button :class=\"config.classes_prev\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n      {{config.previous_button_text}}\n    </button>\n    <span :class=\"config.classes_message\">{{message}}</span>\n    <button :class=\"config.classes_next\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n      {{config.next_button_text}}\n    </button>\n  </div>";
+	var core = module.exports = { version: '2.5.7' };
+	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+	module.exports = "<div class=\"v-paginator\">\n    <button :class=\"config.classes_prev\" @click=\"fetchData(prev_page_url)\" :disabled=\"!prev_page_url\">\n      {{config.previous_button_text}}\n    </button>\n    <span :class=\"config.classes_message\" ref=\"message\">{{message}}</span>\n    <button :class=\"config.classes_next\" @click=\"fetchData(next_page_url)\" :disabled=\"!next_page_url\">\n      {{config.next_button_text}}\n    </button>\n  </div>";
 
 /***/ })
 /******/ ])

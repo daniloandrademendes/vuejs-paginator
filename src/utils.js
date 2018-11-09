@@ -12,7 +12,11 @@ const getNestedValue = (obj, path) => {
   for (let i = 0; i < path.length; i++) {
     res = res[path[i]]
   }
-  if(typeof res == 'undefined') console.log(`[VuePaginator] Response doesn't contain key ${originalPath}!`)
+  if (typeof res == 'undefined') {
+    console.log(`[VuePagintor] Response doesn't contain key ${originalPath}!`)
+    console.log(`obj: ${JSON.stringify(obj, null, "  ")}`)
+    console.log(`path: ${path}`)
+  }
   return res
 }
 

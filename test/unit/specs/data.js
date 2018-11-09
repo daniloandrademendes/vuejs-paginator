@@ -45,5 +45,6 @@ export const options = {
   remote_current_page: 'nested.current_page',
   remote_last_page: 'nested.last_page',
   remote_next_page_url: 'nested.next_page_url',
-  remote_prev_page_url: 'nested.prev_page_url'
+  remote_prev_page_url: 'nested.prev_page_url',
+  remote_items_count: 'nested.items_count'
 }

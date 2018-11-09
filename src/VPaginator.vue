@@ -3,7 +3,7 @@
     <button :class="config.classes_prev" @click="fetchData(prev_page_url)" :disabled="!prev_page_url">
       {{config.previous_button_text}}
     </button>
-    <span :class="config.classes_message">{{message}}</span>
+    <span :class="config.classes_message" ref="message">{{message}}</span>
     <button :class="config.classes_next" @click="fetchData(next_page_url)" :disabled="!next_page_url">
       {{config.next_button_text}}
     </button>
@@ -34,7 +34,7 @@ export default {
       items_count: '',
       next_page_url: '',
       prev_page_url: '',
-      message: '',
+      message: ' 13',
       config: {
           remote_data: 'data',
           remote_current_page: 'current_page',
@@ -60,32 +60,32 @@ export default {
       if(this.config.headers) {
           config.headers = this.config.headers;
       }
-      this.$http.get(pageUrl, config)
-      .then(function (response) {
-        self.$emit("request_finish",response);
-        self.handleResponseData(response.data)
-      }).catch(function (response) {
-        self.$emit("request_error",response);
-        console.log('Fetching data failed.', response)
-      })
+      if (pageUrl) {
+        this.$http.get(pageUrl, config)
+        .then(function (response) {
+          self.$emit("request_finish",response)
+          self.handleResponseData(response.data)
+        }).catch(function (response) {
+          self.$emit("request_error",response);
+          console.log('Fetching data failed.', response)
+        })
+      }
     },
     handleResponseData (response) {
       this.makePagination(response)
       let data = utils.getNestedValue(response, this.config.remote_data)
-      console.log(data)
     },
     makePagination (data) {
       this.current_page = utils.getNestedValue(data, this.config.remote_current_page)
       this.last_page = utils.getNestedValue(data, this.config.remote_last_page)
       this.items_count = utils.getNestedValue(data, this.config.remote_items_count)
-      this.next_page_url = (this.current_page === this.last_page) ? null : utils.getNestedValue(data, this.config.remote_next_page_url);
-      this.prev_page_url = (this.current_page === 1) ? null : utils.getNestedValue(data, this.config.remote_prev_page_url);
+      this.next_page_url = (this.current_page === this.last_page) ? null : utils.getNestedValue(data, this.config.remote_next_page_url)
+      this.prev_page_url = (this.current_page === 1) ? null : utils.getNestedValue(data, this.config.remote_prev_page_url)
       this.message = utils.format(this.config.message_format, {
         current_page: this.current_page,
         last_page: this.last_page,
         items_count: this.items_count
       })
-      console.log("message: " + this.message)
     },
     initConfig(){
       this.config = utils.merge_objects(this.config, this.options)
